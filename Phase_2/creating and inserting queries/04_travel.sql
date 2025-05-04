@@ -56,6 +56,3 @@ VALUES
 
 
 SELECT * FROM travel;
-
-
-
