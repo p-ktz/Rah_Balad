@@ -40,7 +40,6 @@ DELIMITER ;
 
 INSERT INTO rah_balad.bus (vehicle_id, bus_company_name, bus_class, seats_on_left, seats_on_right)
 VALUES
-
   (3, 'IranPeyma', 'Sleeper', 3, 2),
   (5, 'AlborzSafar', 'Normal', 2, 2),
   (8, 'SimaTravel', 'VIP', 5, 5),

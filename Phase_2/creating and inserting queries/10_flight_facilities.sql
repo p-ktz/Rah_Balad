@@ -19,6 +19,10 @@ CREATE TABLE rah_balad.flight_facilities (
 
 INSERT INTO rah_balad.flight_facilities (vehicle_id, reception, internet, bed_chair, more)
 VALUES
-  (2, FALSE, TRUE, TRUE, NULL);
+  (2, FALSE, TRUE, TRUE, NULL),
+  (7, TRUE, TRUE, TRUE, JSON_OBJECT('meal_service', 'available', 'entertainment', 'included')),
+  (11, TRUE, FALSE, FALSE, JSON_OBJECT('charging_ports', 'available', 'wifi', 'not_included')),
+  (13, FALSE, TRUE, TRUE, NULL),
+  (17, TRUE, TRUE, FALSE, JSON_OBJECT('wifi', 'available', 'snacks', 'provided'));
 
 SELECT * FROM rah_balad.flight_facilities;

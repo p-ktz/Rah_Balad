@@ -21,6 +21,10 @@ CREATE TABLE rah_balad.train_facilities (
 INSERT INTO rah_balad.train_facilities (vehicle_id, sleeper_compartment, reception, internet, air_conditioning, more)
 VALUES
   (1, TRUE, FALSE, TRUE, TRUE, NULL),
-  (4, TRUE, TRUE, FALSE, TRUE, NULL);
+  (4, TRUE, TRUE, FALSE, TRUE, NULL),
+  (9, TRUE, TRUE, TRUE, TRUE, JSON_OBJECT('wifi', 'available', 'food_service', 'included')),
+  (12, FALSE, TRUE, TRUE, TRUE, JSON_OBJECT('tv', 'available', 'power_outlets', 'available')),
+  (15, TRUE, FALSE, TRUE, FALSE, NULL),
+  (18, TRUE, TRUE, TRUE, TRUE, JSON_OBJECT('wifi', 'available', 'tv', 'included'));
 
 SELECT * FROM rah_balad.train_facilities;

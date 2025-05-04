@@ -21,6 +21,10 @@ CREATE TABLE rah_balad.bus_facilities (
 INSERT INTO rah_balad.bus_facilities (vehicle_id, personal_monitor, reception, internet, air_conditioning, more)
 VALUES
   (3, TRUE, FALSE, FALSE, TRUE, '{"entertainment_system": true}'),
-  (5, FALSE, TRUE, TRUE, TRUE, NULL);
+  (5, FALSE, TRUE, TRUE, TRUE, NULL),
+  (8, TRUE, TRUE, TRUE, TRUE, '{"wifi": "available", "snack_service": "provided"}'),
+  (10, FALSE, TRUE, FALSE, TRUE, '{"charging_ports": "available", "restroom": "not_included"}'),
+  (14, TRUE, FALSE, TRUE, FALSE, '{"reclining_seats": "yes", "extra_legroom": "included"}'),
+  (16, FALSE, TRUE, TRUE, TRUE, '{"entertainment_system": "included", "power_outlets": "available"}');
 
 SELECT * FROM rah_balad.bus_facilities;
