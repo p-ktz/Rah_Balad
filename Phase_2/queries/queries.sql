@@ -127,5 +127,24 @@ WHERE
 --     AND r.payment_status = 'Completed'
 GROUP BY a.city;
 
+-- 10
+SELECT DISTINCT ad.city
+FROM users u
+JOIN reservations r ON r.user_id = u.user_id
+JOIN travel_route_and_date trd ON r.travel_id = trd.travel_id
+JOIN address ad ON trd.address_id = ad.address_id
+WHERE u.user_id IN (
+    SELECT user_id 
+    FROM users u
+    WHERE 
+    u.registeration_date = (
+        SELECT MIN(registeration_date) FROM users
+    )
+)
+AND r.payment_status = 'Completed';
+
+-- 11
+
+
 
 
