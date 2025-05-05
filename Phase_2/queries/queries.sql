@@ -30,13 +30,15 @@ SELECT
     u.user_id,
     u.first_name,
     u.last_name,
-    u.address,
-    COUNT(r.reservation_id) AS reservation_count
+    a.city,
+    COUNT(r.reservation_id) AS total_reservations_in_city
 FROM users u
-JOIN reservations r ON u.user_id = r.user_id
-GROUP BY u.user_id, u.address
+JOIN address a ON u.address_id = a.address_id
+JOIN reservations r ON r.user_id = u.user_id
+WHERE r.payment_status = 'Completed'
+GROUP BY u.user_id, a.city
 HAVING COUNT(r.reservation_id) = 1
-ORDER BY u.address;
+ORDER BY a.city;
 
 -- 5
 SELECT 
@@ -115,11 +117,15 @@ LIMIT 3;
 
 -- 9
 SELECT 
-  SUBSTRING_INDEX(u.address, ',', 1) AS city,
-  COUNT(*) AS number_of_tickets
+    a.city,
+    COUNT(r.reservation_id) AS total_tickets_sold
 FROM reservations r
 JOIN users u ON r.user_id = u.user_id
-WHERE u.address LIKE 'Tehran,%'
-GROUP BY city;
+JOIN address a ON u.address_id = a.address_id
+WHERE 
+	a.province = 'Tehran'
+--     AND r.payment_status = 'Completed'
+GROUP BY a.city;
+
 
 

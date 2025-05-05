@@ -6,6 +6,9 @@ CREATE INDEX idx_users_user_role ON users(user_role);
 -- 3
 CREATE INDEX idx_payment_user_date ON payment(user_id, payment_date);
 
+-- 4
+CREATE INDEX idx_reservations_payment_user ON reservations (payment_status, user_id);
+
 -- 5
 CREATE INDEX idx_reservation_date_user ON reservations(reservation_date, user_id);
 
@@ -19,4 +22,4 @@ CREATE INDEX idx_reservation_travel_status ON reservations(travel_id, payment_st
 CREATE INDEX idx_reservation_date_status ON reservations(reservation_date, reservation_status);
 
 -- 9
-CREATE INDEX idx_users_address_userid ON users(address, user_id);
+CREATE INDEX idx_address_province_city ON address (province, city);
