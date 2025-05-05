@@ -223,3 +223,18 @@ FROM (
 ) AS sales
 JOIN travel t ON t.travel_id = sales.travel_id
 JOIN vehicle v ON v.vehicle_id = t.vehicle_id;
+
+-- 17
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  COUNT(gc.reservation_id) AS total_rejected_reservations,
+  (COUNT(gc.reservation_id) / (SELECT COUNT(*) FROM get_checked WHERE users_admin_id = u.user_id)) * 100 AS rejection_percentage
+FROM users u
+JOIN get_checked gc ON u.user_id = gc.users_admin_id
+WHERE gc.status = 'Reject'
+GROUP BY u.user_id, u.first_name, u.last_name
+HAVING COUNT(gc.reservation_id) > 0
+ORDER BY total_rejected_reservations DESC
+LIMIT 1;

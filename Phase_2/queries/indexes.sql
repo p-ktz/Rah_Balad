@@ -37,3 +37,6 @@ CREATE INDEX idx_travel_vehicle ON travel(travel_id, vehicle_id);
 
 -- 15
 CREATE INDEX idx_reservation_date ON reservations(reservation_date);
+
+-- 17
+CREATE INDEX idx_get_checked_user_status ON get_checked (users_admin_id, status);
