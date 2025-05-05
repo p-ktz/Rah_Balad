@@ -144,7 +144,40 @@ WHERE u.user_id IN (
 AND r.payment_status = 'Completed';
 
 -- 11
+SELECT 
+  user_id,
+  first_name,
+  last_name,
+  email
+FROM users
+WHERE user_role = 'Admin';
 
+-- 12
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  COUNT(r.reservation_id) AS total_tickets
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+-- WHERE r.payment_status = 'Completed'
+GROUP BY u.user_id, u.first_name, u.last_name
+HAVING COUNT(r.reservation_id) >= 2;
+
+-- 13
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  v.vehicle_type,
+  COUNT(r.reservation_id) AS total_tickets
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+JOIN travel t ON r.travel_id = t.travel_id
+JOIN vehicle v ON t.vehicle_id = v.vehicle_id
+WHERE r.payment_status = 'Completed'
+GROUP BY u.user_id, v.vehicle_type, u.first_name, u.last_name
+HAVING COUNT(r.reservation_id) <= 2;
 
 
 

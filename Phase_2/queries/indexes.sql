@@ -29,4 +29,6 @@ CREATE INDEX idx_users_registeration_date ON users (registeration_date);
 CREATE INDEX idx_res_user_travel_status ON reservations(user_id, travel_id, payment_status);
 CREATE INDEX idx_travel_route_address ON travel_route_and_date(travel_id, address_id);
 
+-- 13
+CREATE INDEX idx_vehicle_type ON vehicle(vehicle_type);
 
