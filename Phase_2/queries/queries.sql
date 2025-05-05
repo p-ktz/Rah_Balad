@@ -238,3 +238,16 @@ GROUP BY u.user_id, u.first_name, u.last_name
 HAVING COUNT(gc.reservation_id) > 0
 ORDER BY total_rejected_reservations DESC
 LIMIT 1;
+
+-- 18
+UPDATE users
+SET last_name = 'Reddington'
+WHERE user_id = (
+  SELECT r.user_id
+  FROM reservations r
+  WHERE r.reservation_status IN ('Cancelled', 'Expired')
+  GROUP BY r.user_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+);
+

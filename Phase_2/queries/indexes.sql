@@ -40,3 +40,6 @@ CREATE INDEX idx_reservation_date ON reservations(reservation_date);
 
 -- 17
 CREATE INDEX idx_get_checked_user_status ON get_checked (users_admin_id, status);
+
+-- 18
+CREATE INDEX idx_reservation_status_user ON reservations (reservation_status, user_id);

@@ -37,6 +37,11 @@ BEGIN
 
   SELECT user_role INTO role FROM users WHERE user_id = NEW.user_id;
 
+  IF role IS NULL THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'User ID does not exist.';
+  END IF;
+
   IF role = 'Admin' THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'Admins cannot make reservations.';
