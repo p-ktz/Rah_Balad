@@ -46,7 +46,11 @@ VALUES
 ('7878787878', 'Hossein', 'Vakili', 'hossein.vakili@example.com', 'hosseinSecure2024', NOW(), 'Active', 'Admin', NULL, 'Sanandaj, Iran'),
 ('9090909090', 'Mahsa', 'Kazemi', 'mahsa.kazemi@example.com', 'mahsa2025!', NOW(), 'Active', 'Customer', NULL, 'Birjand, Iran'),
 ('3131313131', 'Mehrdad', 'Ranjbar', 'mehrdad.r@example.com', 'mehrdadPW', NOW(), 'Active', 'Customer', NULL, 'Ilam, Iran'),
-('6464646464', 'Elham', 'Hashemi', 'elham.hashemi@example.com', 'elhamSecure', NOW(), 'Active', 'Customer', NULL, 'Abadan, Iran');
+('6464646464', 'Elham', 'Hashemi', 'elham.hashemi@example.com', 'elhamSecure', NOW(), 'Active', 'Customer', NULL, 'Abadan, Iran'),
+('1010101010', 'Shima', 'Abbasi', 'shima.abbasi@example.com', 'shimaPass1', NOW(), 'Active', 'Customer', NULL, 'Kermanshah, Iran'),
+('1213141516', 'Kamran', 'Ehsani', 'kamran.ehsani@example.com', 'kamranSecure99', NOW(), 'Active', 'Customer', NULL, 'Zanjan, Iran'),
+('1718192021', 'Zahra', 'Moradi', 'zahra.moradi@example.com', 'zahraPW2025', NOW(), 'Inactive', 'Customer', NULL, 'Sari, Iran'),
+('2224252627', 'Behnam', 'Azizi', 'behnam.azizi@example.com', 'behnamStrong', NOW(), 'Active', 'Customer', NULL, 'Qazvin, Iran');
 
 
 SELECT * FROM users;
