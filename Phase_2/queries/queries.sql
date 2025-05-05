@@ -104,3 +104,19 @@ WHERE r.payment_status = 'Completed'
 GROUP BY v.vehicle_type;
 
 -- 8
+-- CREATE INDEX idx_reservation_date_status ON reservations(reservation_date, reservation_status);
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  COUNT(*) AS number_of_tickets
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+WHERE r.payment_status = 'Completed'
+  AND r.reservation_date >= NOW() - INTERVAL 7 DAY
+--   AND r.reservation_status = 'Confirmed'
+GROUP BY u.user_id
+ORDER BY number_of_tickets DESC
+LIMIT 3;
+
+-- 9
