@@ -202,3 +202,24 @@ FROM reservations r
 WHERE DATE(r.reservation_date) = CURRENT_DATE()
 -- 	AND r.payment_status = 'Completed'
 ORDER BY r.reservation_date ASC;
+
+-- 16
+SELECT 
+    t.travel_id,
+    t.price,
+    t.travel_class,
+    t.travel_status,
+    v.vehicle_type,
+    sales.total_sales
+FROM (
+    SELECT 
+        r.travel_id,
+        COUNT(*) AS total_sales
+    FROM reservations r
+--     WHERE r.payment_status = 'Completed'
+    GROUP BY r.travel_id
+    ORDER BY total_sales DESC
+    LIMIT 1 OFFSET 1
+) AS sales
+JOIN travel t ON t.travel_id = sales.travel_id
+JOIN vehicle v ON v.vehicle_id = t.vehicle_id;
