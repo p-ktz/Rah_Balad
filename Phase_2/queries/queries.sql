@@ -1,7 +1,6 @@
 USE rah_balad;
 
 -- 1
--- CREATE INDEX idx_users_user_role ON users(user_role);
 SELECT u.user_id, first_name, last_name 
 FROM users u
 LEFT JOIN reservations r ON u.user_id = r.user_id
@@ -15,7 +14,6 @@ WHERE u.user_role = 'Customer'
 GROUP BY u.user_id;
 
 -- 3
--- CREATE INDEX idx_payment_user_date ON payment(user_id, payment_date);
 SELECT 
   u.user_id,
   u.first_name,
@@ -41,7 +39,6 @@ HAVING COUNT(r.reservation_id) = 1
 ORDER BY u.address;
 
 -- 5
--- CREATE INDEX idx_reservation_date_user ON reservations(reservation_date, user_id);
 SELECT 
   u.user_id, 
   u.first_name, 
@@ -71,7 +68,6 @@ ORDER BY r.reservation_date DESC
 LIMIT 1;
 
 -- 6
--- CREATE INDEX idx_payment_user_amount ON payment(user_id, amount_paid);
 SELECT 
   u.user_id,
   u.first_name,
@@ -93,7 +89,6 @@ HAVING total_paid > (
 );
 
 -- 7
--- CREATE INDEX idx_reservation_travel_status ON reservations(travel_id, payment_status);
 SELECT 
   v.vehicle_type,
   COUNT(r.reservation_id) AS number_of_tickets_sold
@@ -104,7 +99,6 @@ WHERE r.payment_status = 'Completed'
 GROUP BY v.vehicle_type;
 
 -- 8
--- CREATE INDEX idx_reservation_date_status ON reservations(reservation_date, reservation_status);
 SELECT 
   u.user_id,
   u.first_name,
@@ -120,3 +114,12 @@ ORDER BY number_of_tickets DESC
 LIMIT 3;
 
 -- 9
+SELECT 
+  SUBSTRING_INDEX(u.address, ',', 1) AS city,
+  COUNT(*) AS number_of_tickets
+FROM reservations r
+JOIN users u ON r.user_id = u.user_id
+WHERE u.address LIKE 'Tehran,%'
+GROUP BY city;
+
+
