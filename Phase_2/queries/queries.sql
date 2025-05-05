@@ -179,5 +179,20 @@ WHERE r.payment_status = 'Completed'
 GROUP BY u.user_id, v.vehicle_type, u.first_name, u.last_name
 HAVING COUNT(r.reservation_id) <= 2;
 
-
+-- 14
+SELECT 
+  u.user_id,
+  u.email,
+  pn.phone_number
+FROM users u
+LEFT JOIN phone_number pn ON u.user_id = pn.user_id
+WHERE u.user_id IN (
+  SELECT r.user_id
+  FROM reservations r
+  JOIN travel t ON r.travel_id = t.travel_id
+  JOIN vehicle v ON t.vehicle_id = v.vehicle_id
+  WHERE r.payment_status = 'Completed'
+  GROUP BY r.user_id
+  HAVING COUNT(DISTINCT v.vehicle_type) = 3
+);
 

@@ -32,3 +32,5 @@ CREATE INDEX idx_travel_route_address ON travel_route_and_date(travel_id, addres
 -- 13
 CREATE INDEX idx_vehicle_type ON vehicle(vehicle_type);
 
+-- 14
+CREATE INDEX idx_travel_vehicle ON travel(travel_id, vehicle_id);
