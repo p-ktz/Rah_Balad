@@ -196,3 +196,9 @@ WHERE u.user_id IN (
   HAVING COUNT(DISTINCT v.vehicle_type) = 3
 );
 
+-- 15
+SELECT r.*
+FROM reservations r
+WHERE DATE(r.reservation_date) = CURRENT_DATE()
+-- 	AND r.payment_status = 'Completed'
+ORDER BY r.reservation_date ASC;
