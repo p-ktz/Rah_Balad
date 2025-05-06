@@ -262,3 +262,5 @@ WHERE reservation_status IN ('Cancelled', 'Expired')
   );
 
 -- 20
+DELETE FROM reservations
+WHERE reservation_status IN ('Cancelled', 'Expired');

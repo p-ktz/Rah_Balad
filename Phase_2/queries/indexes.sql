@@ -46,3 +46,6 @@ CREATE INDEX idx_reservation_status_user ON reservations (reservation_status, us
 
 -- 19
 CREATE INDEX idx_users_last_name ON users (last_name);
+
+-- 20
+CREATE INDEX idx_reservation_status ON reservations (reservation_status);
