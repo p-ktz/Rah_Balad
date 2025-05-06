@@ -264,3 +264,14 @@ WHERE reservation_status IN ('Cancelled', 'Expired')
 -- 20
 DELETE FROM reservations
 WHERE reservation_status IN ('Cancelled', 'Expired');
+
+-- 21
+UPDATE travel t
+-- select * from travel t
+JOIN flight f ON t.vehicle_id = f.vehicle_id
+JOIN reservations r ON r.travel_id = t.travel_id
+SET t.price = t.price * 0.9
+WHERE f.airline_name = 'Mahan Air'
+  AND DATE(r.reservation_date) = CURDATE() - INTERVAL 1 DAY
+--   AND r.payment_status = 'Completed';
+

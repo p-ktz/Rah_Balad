@@ -49,3 +49,6 @@ CREATE INDEX idx_users_last_name ON users (last_name);
 
 -- 20
 CREATE INDEX idx_reservation_status ON reservations (reservation_status);
+
+-- 21
+CREATE INDEX idx_flight_airline_name ON flight (airline_name);
