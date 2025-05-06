@@ -52,3 +52,6 @@ CREATE INDEX idx_reservation_status ON reservations (reservation_status);
 
 -- 21
 CREATE INDEX idx_flight_airline_name ON flight (airline_name);
+
+-- 22
+CREATE INDEX idx_reports_user_reservation_id_title ON reports (user_reservation_id, report_title);

@@ -272,6 +272,24 @@ JOIN flight f ON t.vehicle_id = f.vehicle_id
 JOIN reservations r ON r.travel_id = t.travel_id
 SET t.price = t.price * 0.9
 WHERE f.airline_name = 'Mahan Air'
-  AND DATE(r.reservation_date) = CURDATE() - INTERVAL 1 DAY
+  AND DATE(r.reservation_date) = CURDATE() - INTERVAL 1 DAY;
 --   AND r.payment_status = 'Completed';
+
+-- 22
+SELECT 
+  rep.user_reservation_id,
+  rep.report_title,
+  COUNT(*) AS report_count
+FROM reports rep
+WHERE rep.user_reservation_id IS NOT NULL
+GROUP BY rep.user_reservation_id, rep.report_title
+HAVING rep.user_reservation_id = (
+  SELECT user_reservation_id
+  FROM reports
+  WHERE user_reservation_id IS NOT NULL
+  GROUP BY user_reservation_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+);
+
 
