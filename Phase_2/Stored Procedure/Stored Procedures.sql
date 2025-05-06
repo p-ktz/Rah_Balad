@@ -130,3 +130,29 @@ CALL GetRejectedUsersByAdminPhone('7878787878');
 
 
 -- 3
+DROP PROCEDURE IF EXISTS GetReservationsByCity;
+DELIMITER //
+CREATE PROCEDURE GetReservationsByCity(IN cityName VARCHAR(100))
+BEGIN
+  SELECT
+    r.reservation_id,
+    r.user_id,
+    r.travel_id,
+    r.seat_number,
+    r.reservation_status,
+    r.payment_status,
+    r.reservation_date,
+    r.expiration_date,
+    a.city,
+    a.street
+  FROM reservations r
+  JOIN travel_route_and_date trd ON r.travel_id = trd.travel_id
+  JOIN address a ON trd.address_id = a.address_id
+  WHERE a.city = cityName;
+--     AND r.payment_status = 'Completed';
+END;
+// DELIMITER ;
+
+CALL GetReservationsByCity('Tehran');
+CALL GetReservationsByCity('Karaj');
+CALL GetReservationsByCity('London');
