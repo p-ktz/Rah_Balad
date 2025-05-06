@@ -43,3 +43,6 @@ CREATE INDEX idx_get_checked_user_status ON get_checked (users_admin_id, status)
 
 -- 18
 CREATE INDEX idx_reservation_status_user ON reservations (reservation_status, user_id);
+
+-- 19
+CREATE INDEX idx_users_last_name ON users (last_name);

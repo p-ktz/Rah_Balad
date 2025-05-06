@@ -251,3 +251,14 @@ WHERE user_id = (
   LIMIT 1
 );
 
+-- 19
+DELETE FROM reservations
+WHERE reservation_status IN ('Cancelled', 'Expired')
+  AND user_id = (
+    SELECT user_id
+    FROM users
+    WHERE last_name = 'Reddington'
+    LIMIT 1
+  );
+
+-- 20
