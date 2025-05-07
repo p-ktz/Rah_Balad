@@ -46,7 +46,11 @@ SELECT
   u.first_name, 
   u.last_name, 
   u.email, 
-  u.address, 
+  u.registeration_date,
+  u.account_status,
+  u.user_role,
+  u.user_profile_picture,
+  r.reservation_id,
   r.reservation_date
 FROM users u
 JOIN reservations r ON u.user_id = r.user_id
@@ -61,13 +65,17 @@ SELECT
   u.first_name, 
   u.last_name, 
   u.email, 
-  u.address, 
+  u.registeration_date,
+  u.account_status,
+  u.user_role,
+  u.user_profile_picture,
+  r.reservation_id,
   r.reservation_date
 FROM users u
 JOIN reservations r ON u.user_id = r.user_id
 WHERE r.payment_status = 'Completed'
 ORDER BY r.reservation_date DESC
-LIMIT 1;
+LIMIT 5;
 
 -- 6
 SELECT 
@@ -128,7 +136,10 @@ WHERE
 GROUP BY a.city;
 
 -- 10
-SELECT DISTINCT ad.city
+SELECT DISTINCT
+	ad.city,
+	u.user_id,
+    u.registeration_date
 FROM users u
 JOIN reservations r ON r.user_id = u.user_id
 JOIN travel_route_and_date trd ON r.travel_id = trd.travel_id
@@ -251,6 +262,15 @@ WHERE user_id = (
   LIMIT 1
 );
 
+SELECT u.user_id, u.first_name, u.last_name, COUNT(*) AS cancelled_or_expired_reservations
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+WHERE r.reservation_status IN ('Cancelled', 'Expired')
+GROUP BY u.user_id, u.first_name, u.last_name
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+
+
 -- 19
 DELETE FROM reservations
 WHERE reservation_status IN ('Cancelled', 'Expired')
@@ -271,6 +291,19 @@ UPDATE travel t
 JOIN flight f ON t.vehicle_id = f.vehicle_id
 JOIN reservations r ON r.travel_id = t.travel_id
 SET t.price = t.price * 0.9
+WHERE f.airline_name = 'Mahan Air'
+  AND DATE(r.reservation_date) = CURDATE() - INTERVAL 1 DAY;
+--   AND r.payment_status = 'Completed';
+
+SELECT 
+  t.travel_id,
+  f.airline_name,
+  r.reservation_date,
+  ROUND(t.price / 0.9, 2) AS old_price,
+  t.price AS new_price
+FROM travel t
+JOIN flight f ON t.vehicle_id = f.vehicle_id
+JOIN reservations r ON r.travel_id = t.travel_id
 WHERE f.airline_name = 'Mahan Air'
   AND DATE(r.reservation_date) = CURDATE() - INTERVAL 1 DAY;
 --   AND r.payment_status = 'Completed';
