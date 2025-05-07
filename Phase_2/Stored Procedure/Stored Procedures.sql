@@ -159,33 +159,109 @@ CALL GetReservationsByCity('London');
 
 
 -- 4
-DROP PROCEDURE IF EXISTS SearchReservationsByKeyword;
+DROP PROCEDURE IF EXISTS search_reservations;
 DELIMITER //
-CREATE PROCEDURE SearchReservationsByKeyword(IN keyword VARCHAR(100))
+CREATE PROCEDURE search_reservations(IN search_phrase VARCHAR(255))
 BEGIN
   SELECT 
-    r.reservation_id,
-    CONCAT(u.first_name, ' ', u.last_name) AS passenger_name,
-    v.origin,
-    v.destination,
+    r.reservation_id, 
+    r.travel_id, 
+    r.user_id, 
+    r.seat_number, 
+    r.reservation_status, 
+    r.reservation_date, 
+    r.expiration_date, 
+    r.percentage_discount, 
+    r.payment_status,
     t.travel_class,
-    r.reservation_status,
-    r.reservation_date
-  FROM reservations r
-  JOIN users u ON r.user_id = u.user_id
-  JOIN travel t ON r.travel_id = t.travel_id
-  JOIN vehicle v ON t.vehicle_id = v.vehicle_id
-  WHERE 
-    CONCAT(u.first_name, ' ', u.last_name) LIKE CONCAT('%', keyword, '%')
-    OR v.origin LIKE CONCAT('%', keyword, '%')
-    OR v.destination LIKE CONCAT('%', keyword, '%')
-    OR t.travel_class LIKE CONCAT('%', keyword, '%');
+    u.first_name, 
+    u.last_name
+  FROM 
+    rah_balad.reservations r
+    JOIN rah_balad.travel t ON r.travel_id = t.travel_id
+    JOIN rah_balad.users u ON r.user_id = u.user_id
+  WHERE
+    u.first_name LIKE CONCAT('%', search_phrase, '%') OR
+    u.last_name LIKE CONCAT('%', search_phrase, '%') OR
+    t.travel_class LIKE CONCAT('%', search_phrase, '%');
 END;
 // DELIMITER ;
 
-CALL SearchReservationsByKeyword('Reza');
-CALL SearchReservationsByKeyword('Tehran');
-CALL SearchReservationsByKeyword('Business');
+CALL search_reservations('Reza');
+CALL search_reservations('Business');
 
 
 -- 5
+DROP PROCEDURE IF EXISTS GetSameCityUsersByEmail;
+DELIMITER //
+CREATE PROCEDURE GetSameCityUsersByEmail(IN input_email VARCHAR(255))
+BEGIN
+  DECLARE input_user_id CHAR(10);
+  DECLARE input_city VARCHAR(100);
+
+  SELECT user_id INTO input_user_id
+  FROM users
+  WHERE email = input_email
+  LIMIT 1;
+
+  IF input_user_id IS NOT NULL THEN
+    SELECT a.city INTO input_city
+    FROM users u
+    JOIN address a ON u.address_id = a.address_id
+    WHERE u.user_id = input_user_id;
+
+    IF input_city IS NOT NULL THEN
+      SELECT u.user_id, u.first_name, u.last_name, u.email, a.city, a.street
+      FROM users u
+      JOIN address a ON u.address_id = a.address_id
+      WHERE a.city = input_city AND u.user_id <> input_user_id;
+    ELSE
+      SELECT 'No address found for this user.' AS message;
+    END IF;
+  ELSE
+    SELECT 'No user found with this email address.' AS message;
+  END IF;
+END;
+// DELIMITER ;
+
+CALL GetSameCityUsersByEmail('ali.ahmadi@example.com');
+CALL GetSameCityUsersByEmail('sara.mohammadi@example.com');
+CALL GetSameCityUsersByEmail('م0000@example.com');
+
+-- 5.1
+DROP PROCEDURE IF EXISTS GetSameCityUsersByPhone;
+DELIMITER //
+CREATE PROCEDURE GetSameCityUsersByPhone(IN input_phone CHAR(10))
+BEGIN
+  DECLARE input_user_id CHAR(10);
+  DECLARE input_city VARCHAR(100);
+
+  SELECT user_id INTO input_user_id
+  FROM phone_number
+  WHERE phone_number = input_phone
+  LIMIT 1;
+
+  IF input_user_id IS NOT NULL THEN
+    SELECT a.city INTO input_city
+    FROM users u
+    JOIN address a ON u.address_id = a.address_id
+    WHERE u.user_id = input_user_id;
+
+    IF input_city IS NOT NULL THEN
+      SELECT u.user_id, u.first_name, u.last_name, u.email, a.city, a.street
+      FROM users u
+      JOIN address a ON u.address_id = a.address_id
+      WHERE a.city = input_city AND u.user_id <> input_user_id;
+    ELSE
+      SELECT 'No address found for this user.' AS message;
+    END IF;
+  ELSE
+    SELECT 'No user found with this phone number.' AS message;
+  END IF;
+END;
+// DELIMITER ;
+
+CALL GetSameCityUsersByPhone('9121234567');
+CALL GetSameCityUsersByPhone('9355566778');
+CALL GetSameCityUsersByPhone('9999999999');
+
