@@ -159,9 +159,9 @@ CALL GetReservationsByCity('London');
 
 
 -- 4
-DROP PROCEDURE IF EXISTS search_reservations;
+DROP PROCEDURE IF EXISTS GetReservationsByPassengerOrClassSearch;
 DELIMITER //
-CREATE PROCEDURE search_reservations(IN search_phrase VARCHAR(255))
+CREATE PROCEDURE GetReservationsByPassengerOrClassSearch(IN search_phrase VARCHAR(255))
 BEGIN
   SELECT 
     r.reservation_id, 
@@ -187,8 +187,59 @@ BEGIN
 END;
 // DELIMITER ;
 
-CALL search_reservations('Reza');
-CALL search_reservations('Business');
+CALL GetReservationsByPassengerOrClassSearch('Reza');
+CALL GetReservationsByPassengerOrClassSearch('Re');
+CALL GetReservationsByPassengerOrClassSearch('Business');
+CALL GetReservationsByPassengerOrClassSearch('سلام');
+
+
+-- 4.1
+DROP PROCEDURE IF EXISTS GetTravelsAndReservationsByAddress;
+DELIMITER //
+CREATE PROCEDURE GetTravelsAndReservationsByAddress(IN search_term VARCHAR(100))
+BEGIN
+  SELECT 
+    trd.travel_id,
+    CASE trd.destination_status
+      WHEN 1 THEN 'Origin'
+      WHEN 2 THEN 'Destination 1'
+      ELSE CONCAT('Destination ', trd.destination_status - 1)
+    END AS destination_description,
+    trd.date AS travel_date,
+    CONCAT(
+      ad.street, ', District ', ad.district, ', ',
+      ad.city, ', ',
+      ad.province, ', ',
+      ad.country, ' - Postal Code: ', ad.postal_code
+    ) AS full_address,
+    
+    r.reservation_id,
+    r.user_id,
+    r.seat_number,
+    r.reservation_status,
+    r.payment_status,
+	r.reservation_date,
+    r.expiration_date
+
+  FROM travel_route_and_date trd
+  JOIN address ad ON trd.address_id = ad.address_id
+  LEFT JOIN reservations r ON trd.travel_id = r.travel_id
+
+  WHERE CONCAT(
+      ad.street, ', District ', ad.district, ', ',
+      ad.city, ', ',
+      ad.province, ', ',
+      ad.country, ' - Postal Code: ', ad.postal_code
+    ) LIKE CONCAT('%', search_term, '%')
+    
+  ORDER BY trd.travel_id, r.reservation_date;
+END;
+// DELIMITER ;
+
+CALL GetTravelsAndReservationsByAddress('Tehran');
+CALL GetTravelsAndReservationsByAddress('District 3');
+CALL GetTravelsAndReservationsByAddress('Kara');
+CALL GetTravelsAndReservationsByAddress('سلام');
 
 
 -- 5
