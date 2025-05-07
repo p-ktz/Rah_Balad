@@ -33,7 +33,7 @@ END;
 
 CALL GetReservationsByEmail('ali.ahmadi@example.com');
 CALL GetReservationsByEmail('ladan.farhadi@example.com');
-
+CALL GetReservationsByEmail('0@example.com');
 
 -- 1.1
 DROP PROCEDURE IF EXISTS GetReservationsByPhone;
@@ -68,6 +68,7 @@ END;
 CALL GetReservationsByPhone('9121234567');
 CALL GetReservationsByPhone('9301234567');
 CALL GetReservationsByPhone('9013344556');
+CALL GetReservationsByPhone('9999999999');
 
 
 -- 2
@@ -97,7 +98,7 @@ END;
 
 CALL GetRejectedUsersByAdminEmail('mona.rezaei@example.com');
 CALL GetRejectedUsersByAdminEmail('hossein.vakili@example.com');
-CALL GetRejectedUsersByAdminEmail('sara.mohammadi@example.com');
+CALL GetRejectedUsersByAdminEmail('0@example.com');
 
 -- 2.1
 DROP PROCEDURE IF EXISTS GetRejectedUsersByAdminPhone;
@@ -126,7 +127,7 @@ END;
 
 CALL GetRejectedUsersByAdminPhone('9385566778');
 CALL GetRejectedUsersByAdminPhone('9024455667');
-CALL GetRejectedUsersByAdminPhone('7878787878');
+CALL GetRejectedUsersByAdminPhone('9999999999');
 
 
 -- 3
@@ -277,7 +278,7 @@ END;
 
 CALL GetSameCityUsersByEmail('ali.ahmadi@example.com');
 CALL GetSameCityUsersByEmail('sara.mohammadi@example.com');
-CALL GetSameCityUsersByEmail('م0000@example.com');
+CALL GetSameCityUsersByEmail('م0@example.com');
 
 -- 5.1
 DROP PROCEDURE IF EXISTS GetSameCityUsersByPhone;
@@ -395,4 +396,5 @@ END;
 // DELIMITER ;
 
 CALL GetTopReportersByTitle('تخفیف اعمال نشد');
+CALL GetTopReportersByTitle('سایت کند است');
 CALL GetTopReportersByTitle('error');
