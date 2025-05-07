@@ -156,3 +156,36 @@ END;
 CALL GetReservationsByCity('Tehran');
 CALL GetReservationsByCity('Karaj');
 CALL GetReservationsByCity('London');
+
+
+-- 4
+DROP PROCEDURE IF EXISTS SearchReservationsByKeyword;
+DELIMITER //
+CREATE PROCEDURE SearchReservationsByKeyword(IN keyword VARCHAR(100))
+BEGIN
+  SELECT 
+    r.reservation_id,
+    CONCAT(u.first_name, ' ', u.last_name) AS passenger_name,
+    v.origin,
+    v.destination,
+    t.travel_class,
+    r.reservation_status,
+    r.reservation_date
+  FROM reservations r
+  JOIN users u ON r.user_id = u.user_id
+  JOIN travel t ON r.travel_id = t.travel_id
+  JOIN vehicle v ON t.vehicle_id = v.vehicle_id
+  WHERE 
+    CONCAT(u.first_name, ' ', u.last_name) LIKE CONCAT('%', keyword, '%')
+    OR v.origin LIKE CONCAT('%', keyword, '%')
+    OR v.destination LIKE CONCAT('%', keyword, '%')
+    OR t.travel_class LIKE CONCAT('%', keyword, '%');
+END;
+// DELIMITER ;
+
+CALL SearchReservationsByKeyword('Reza');
+CALL SearchReservationsByKeyword('Tehran');
+CALL SearchReservationsByKeyword('Business');
+
+
+-- 5
