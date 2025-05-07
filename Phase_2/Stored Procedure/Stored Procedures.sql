@@ -320,3 +320,28 @@ CALL GetCancelledReservationsByVehicleType('Flight');
 CALL GetCancelledReservationsByVehicleType('Bus');
 CALL GetCancelledReservationsByVehicleType('salam');
 
+
+-- 8
+DROP PROCEDURE IF EXISTS GetTopReportersByTitle;
+DELIMITER //
+CREATE PROCEDURE GetTopReportersByTitle(IN title VARCHAR(45))
+BEGIN
+
+  IF NOT EXISTS (
+    SELECT 1 FROM reports WHERE report_title = title
+  ) THEN
+      SELECT 'No reports found for the given title.' AS error_message;
+  ELSE
+    SELECT 
+      user_id_that_reported,
+      COUNT(*) AS report_count
+    FROM reports
+    WHERE report_title = title
+    GROUP BY user_id_that_reported
+    ORDER BY report_count DESC;
+  END IF;
+END;
+// DELIMITER ;
+
+CALL GetTopReportersByTitle('تخفیف اعمال نشد');
+CALL GetTopReportersByTitle('error');
