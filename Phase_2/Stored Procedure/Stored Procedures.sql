@@ -265,3 +265,58 @@ CALL GetSameCityUsersByPhone('9121234567');
 CALL GetSameCityUsersByPhone('9355566778');
 CALL GetSameCityUsersByPhone('9999999999');
 
+
+-- 6
+DROP PROCEDURE IF EXISTS GetTopUsersByTicketPurchase;
+DELIMITER //
+CREATE PROCEDURE GetTopUsersByTicketPurchase(IN input_date DATETIME, IN top_n INT)
+BEGIN
+  SELECT r.user_id, COUNT(r.reservation_id) AS ticket_count
+  FROM rah_balad.reservations r
+  WHERE r.reservation_date >= input_date
+--     AND r.reservation_status = 'Confirmed'
+  GROUP BY r.user_id
+  ORDER BY ticket_count DESC
+  LIMIT top_n;
+END;
+// DELIMITER ;
+
+CALL GetTopUsersByTicketPurchase('2025-05-01 00:00:00', 5); 
+CALL GetTopUsersByTicketPurchase('2025-05-05 00:00:00',10); 
+CALL GetTopUsersByTicketPurchase('2025-05-15 00:00:00',10); 
+CALL GetTopUsersByTicketPurchase('2025-06-05 00:00:00', 3); 
+
+
+-- 7
+DROP PROCEDURE IF EXISTS GetCancelledReservationsByVehicleType;
+DELIMITER //
+CREATE PROCEDURE GetCancelledReservationsByVehicleType(IN v_type VARCHAR(10))
+BEGIN
+  IF v_type NOT IN ('Train', 'Flight', 'Bus') THEN
+    SELECT 'Invalid vehicle type. Must be one of: Train, Flight, Bus.' AS error_message;
+  ELSE
+    SELECT 
+      r.reservation_id,
+      r.user_id,
+      r.seat_number,
+      r.reservation_date,
+      r.expiration_date,
+      r.payment_status,
+      t.travel_id,
+      v.vehicle_id,
+      v.vehicle_type
+    FROM reservations r
+    JOIN travel t ON r.travel_id = t.travel_id
+    JOIN vehicle v ON t.vehicle_id = v.vehicle_id
+    WHERE r.reservation_status IN ('Cancelled', 'Expired')
+      AND v.vehicle_type = v_type
+    ORDER BY r.reservation_date ASC;
+  END IF;
+END;
+// DELIMITER ;
+
+CALL GetCancelledReservationsByVehicleType('Train');
+CALL GetCancelledReservationsByVehicleType('Flight');
+CALL GetCancelledReservationsByVehicleType('Bus');
+CALL GetCancelledReservationsByVehicleType('salam');
+

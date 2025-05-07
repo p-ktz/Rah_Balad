@@ -13,7 +13,3 @@ CREATE INDEX idx_address_city ON address(city);
 -- 4
 CREATE INDEX idx_users_fullname ON users (first_name, last_name);
 CREATE INDEX idx_travel_class ON travel (travel_class);
-
--- 6
-
-
