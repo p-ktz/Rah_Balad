@@ -1,0 +1,328 @@
+USE rah_balad;
+
+-- 1
+SELECT u.user_id, first_name, last_name 
+FROM users u
+LEFT JOIN reservations r ON u.user_id = r.user_id
+WHERE r.reservation_id IS NULL AND u.user_role = 'Customer';
+
+-- 2
+SELECT u.user_id, u.first_name, u.last_name, COUNT(*) AS numer_of_reservations
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+WHERE u.user_role = 'Customer'
+GROUP BY u.user_id;
+
+-- 3
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  DATE_FORMAT(p.payment_date, '%Y-%m') AS payment_month,
+  SUM(p.amount_paid) AS total_paid
+FROM payment p
+JOIN users u ON p.user_id = u.user_id
+GROUP BY u.user_id, payment_month
+ORDER BY u.user_id, payment_month;
+
+-- 4
+SELECT 
+    u.user_id,
+    u.first_name,
+    u.last_name,
+    a.city,
+    COUNT(r.reservation_id) AS total_reservations_in_city
+FROM users u
+JOIN address a ON u.address_id = a.address_id
+JOIN reservations r ON r.user_id = u.user_id
+WHERE r.payment_status = 'Completed'
+GROUP BY u.user_id, a.city
+HAVING COUNT(r.reservation_id) = 1
+ORDER BY a.city;
+
+-- 5
+SELECT 
+  u.user_id, 
+  u.first_name, 
+  u.last_name, 
+  u.email, 
+  u.registeration_date,
+  u.account_status,
+  u.user_role,
+  u.user_profile_picture,
+  r.reservation_id,
+  r.reservation_date
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+WHERE r.reservation_date = (
+  SELECT MAX(reservation_date)
+  FROM reservations
+);
+
+-- 5.1
+SELECT 
+  u.user_id, 
+  u.first_name, 
+  u.last_name, 
+  u.email, 
+  u.registeration_date,
+  u.account_status,
+  u.user_role,
+  u.user_profile_picture,
+  r.reservation_id,
+  r.reservation_date
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+WHERE r.payment_status = 'Completed'
+ORDER BY r.reservation_date DESC
+LIMIT 5;
+
+-- 6
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  u.email,
+  pn.phone_number,
+  SUM(p.amount_paid) AS total_paid
+FROM users u
+LEFT JOIN payment p ON u.user_id = p.user_id
+LEFT JOIN phone_number pn ON u.user_id = pn.user_id
+GROUP BY u.user_id, pn.phone_number, u.email, u.first_name, u.last_name
+HAVING total_paid > (
+  SELECT AVG(user_total)
+  FROM (
+    SELECT SUM(amount_paid) AS user_total
+    FROM payment
+    GROUP BY user_id
+  ) AS user_totals
+);
+
+-- 7
+SELECT 
+  v.vehicle_type,
+  COUNT(r.reservation_id) AS number_of_tickets_sold
+FROM vehicle v
+JOIN travel t ON v.vehicle_id = t.vehicle_id
+JOIN reservations r ON t.travel_id = r.travel_id
+WHERE r.payment_status = 'Completed'
+GROUP BY v.vehicle_type;
+
+-- 8
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  COUNT(*) AS number_of_tickets
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+WHERE r.payment_status = 'Completed'
+  AND r.reservation_date >= NOW() - INTERVAL 7 DAY
+--   AND r.reservation_status = 'Confirmed'
+GROUP BY u.user_id
+ORDER BY number_of_tickets DESC
+LIMIT 3;
+
+-- 9
+SELECT 
+    a.city,
+    COUNT(r.reservation_id) AS total_tickets_sold
+FROM reservations r
+JOIN users u ON r.user_id = u.user_id
+JOIN address a ON u.address_id = a.address_id
+WHERE 
+	a.province = 'Tehran'
+--     AND r.payment_status = 'Completed'
+GROUP BY a.city;
+
+-- 10
+SELECT DISTINCT
+	ad.city,
+	u.user_id,
+    u.registeration_date
+FROM users u
+JOIN reservations r ON r.user_id = u.user_id
+JOIN travel_route_and_date trd ON r.travel_id = trd.travel_id
+JOIN address ad ON trd.address_id = ad.address_id
+WHERE u.user_id IN (
+    SELECT user_id 
+    FROM users u
+    WHERE 
+    u.registeration_date = (
+        SELECT MIN(registeration_date) FROM users
+    )
+)
+AND r.payment_status = 'Completed';
+
+-- 11
+SELECT 
+  user_id,
+  first_name,
+  last_name,
+  email
+FROM users
+WHERE user_role = 'Admin';
+
+-- 12
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  COUNT(r.reservation_id) AS total_tickets
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+-- WHERE r.payment_status = 'Completed'
+GROUP BY u.user_id, u.first_name, u.last_name
+HAVING COUNT(r.reservation_id) >= 2;
+
+-- 13
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  v.vehicle_type,
+  COUNT(r.reservation_id) AS total_tickets
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+JOIN travel t ON r.travel_id = t.travel_id
+JOIN vehicle v ON t.vehicle_id = v.vehicle_id
+WHERE r.payment_status = 'Completed'
+GROUP BY u.user_id, v.vehicle_type, u.first_name, u.last_name
+HAVING COUNT(r.reservation_id) <= 2;
+
+-- 14
+SELECT 
+  u.user_id,
+  u.email,
+  pn.phone_number
+FROM users u
+LEFT JOIN phone_number pn ON u.user_id = pn.user_id
+WHERE u.user_id IN (
+  SELECT r.user_id
+  FROM reservations r
+  JOIN travel t ON r.travel_id = t.travel_id
+  JOIN vehicle v ON t.vehicle_id = v.vehicle_id
+  WHERE r.payment_status = 'Completed'
+  GROUP BY r.user_id
+  HAVING COUNT(DISTINCT v.vehicle_type) = 3
+);
+
+-- 15
+SELECT r.*
+FROM reservations r
+WHERE DATE(r.reservation_date) = CURRENT_DATE()
+-- 	AND r.payment_status = 'Completed'
+ORDER BY r.reservation_date ASC;
+
+-- 16
+SELECT 
+    t.travel_id,
+    t.price,
+    t.travel_class,
+    t.travel_status,
+    v.vehicle_type,
+    sales.total_sales
+FROM (
+    SELECT 
+        r.travel_id,
+        COUNT(*) AS total_sales
+    FROM reservations r
+--     WHERE r.payment_status = 'Completed'
+    GROUP BY r.travel_id
+    ORDER BY total_sales DESC
+    LIMIT 1 OFFSET 1
+) AS sales
+JOIN travel t ON t.travel_id = sales.travel_id
+JOIN vehicle v ON v.vehicle_id = t.vehicle_id;
+
+-- 17
+SELECT 
+  u.user_id,
+  u.first_name,
+  u.last_name,
+  COUNT(gc.reservation_id) AS total_rejected_reservations,
+  (COUNT(gc.reservation_id) / (SELECT COUNT(*) FROM get_checked WHERE users_admin_id = u.user_id)) * 100 AS rejection_percentage
+FROM users u
+JOIN get_checked gc ON u.user_id = gc.users_admin_id
+WHERE gc.status = 'Reject'
+GROUP BY u.user_id, u.first_name, u.last_name
+HAVING COUNT(gc.reservation_id) > 0
+ORDER BY total_rejected_reservations DESC
+LIMIT 1;
+
+-- 18
+UPDATE users
+SET last_name = 'Reddington'
+WHERE user_id = (
+  SELECT r.user_id
+  FROM reservations r
+  WHERE r.reservation_status IN ('Cancelled', 'Expired')
+  GROUP BY r.user_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+);
+
+SELECT u.user_id, u.first_name, u.last_name, COUNT(*) AS cancelled_or_expired_reservations
+FROM users u
+JOIN reservations r ON u.user_id = r.user_id
+WHERE r.reservation_status IN ('Cancelled', 'Expired')
+GROUP BY u.user_id, u.first_name, u.last_name
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+
+
+-- 19
+DELETE FROM reservations
+WHERE reservation_status IN ('Cancelled', 'Expired')
+  AND user_id = (
+    SELECT user_id
+    FROM users
+    WHERE last_name = 'Reddington'
+    LIMIT 1
+  );
+
+-- 20
+DELETE FROM reservations
+WHERE reservation_status IN ('Cancelled', 'Expired');
+
+-- 21
+UPDATE travel t
+-- select * from travel t
+JOIN flight f ON t.vehicle_id = f.vehicle_id
+JOIN reservations r ON r.travel_id = t.travel_id
+SET t.price = t.price * 0.9
+WHERE f.airline_name = 'Mahan Air'
+  AND DATE(r.reservation_date) = CURDATE() - INTERVAL 1 DAY;
+--   AND r.payment_status = 'Completed';
+
+SELECT 
+  t.travel_id,
+  f.airline_name,
+  r.reservation_date,
+  ROUND(t.price / 0.9, 2) AS old_price,
+  t.price AS new_price
+FROM travel t
+JOIN flight f ON t.vehicle_id = f.vehicle_id
+JOIN reservations r ON r.travel_id = t.travel_id
+WHERE f.airline_name = 'Mahan Air'
+  AND DATE(r.reservation_date) = CURDATE() - INTERVAL 1 DAY;
+--   AND r.payment_status = 'Completed';
+
+-- 22
+SELECT 
+  rep.user_reservation_id,
+  rep.report_title,
+  COUNT(*) AS report_count
+FROM reports rep
+WHERE rep.user_reservation_id IS NOT NULL
+GROUP BY rep.user_reservation_id, rep.report_title
+HAVING rep.user_reservation_id = (
+  SELECT user_reservation_id
+  FROM reports
+  WHERE user_reservation_id IS NOT NULL
+  GROUP BY user_reservation_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+);
+
+
